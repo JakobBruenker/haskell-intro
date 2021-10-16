@@ -1,0 +1,90 @@
+HASKELL INTRO
+=============
+
+- SAY AT THE BEGINNING: If you get lost somewhere, feel free to interrupt me and ask
+  a question
+  
+- Maybe also mention that there's a lot to learn and I'll only be able to scratch the surface in this talk
+
+- At the top of the file, have a section that you don't show during the talk that has imports, language pragmas, and `type List = []`
+  - potential issue: won't work for inferred types
+
+- Convert the final haskell file to html with integrated css to share as slides
+  - Could also just share the .hs file, idk
+
+- Use VSCode inline evaluation generously
+
+- 5head: could have a short html presentation at the beginning shown in VSCode built-in browser, and then switch to code
+  - Problem: I'm supposed to share my slides and if I have html slides + code it seems kind of awkward to put all that into one file
+
+- Maybe enable -Werror for incomplete pattern matches to claim that (at least with my settings), you are forced to cover all cases, thus writing head is impossible (unless it's an infinite loop) -> Type-driven programming
+ -> Could introduce NonEmpty here to show how we deal with this sort of things
+go from
+first :: [a] -> a -- impossible!
+to
+first :: [a] -> Maybe
+to
+first :: NonEmpty a -> a
+BUT not sure if the utility of NonEmpty will be apparent without a larger example that shows how it allows you to avoid null-checks everywhere (haskell null, not java null)
+
+- Here's an important point: I have a lot of introductory points listed here about how Haskell has this and that property, but let's be honest, people don't want to hear a story, people want to see code
+  
+- Could say something like "Haskell is a pure, lazy, functional programming language and we'll explain each of those terms over the course of this talk" but not sure though if that's a good idea
+  -> Haskell forces you to learn programming techniques that can also be beneficial when applied to other languages
+  
+- Maybe say something like "Haskell was designed in 1990, so five years before Java, by a bunch of people that were working with different functional languages and wanted a single langauge to combine their efforts. It's still being actively worked on and improved, but everyone I'll be showing today was part of the language back then as well." Also something like "it has slowly but steadily been increasing in popularity ever since" or something idk
+
+- General idea: have a text file in VS Code with whitespace between slides,
+  remove whitespace when you wanna go to the next slide
+
+- Mention that other languages (esp. Java) are taking inspiration
+  - e.g. Streams, (G)ADTs (instead of an explanation could simply say that all the type definitions I'll be showing are examples of ADTs),
+    Pattern matching, Lambdas, are all things
+    Haskell had 30 years ago (and, if I may, a better version of each of them
+	it's designed into the language rather than clumsily bolted onto it)
+	
+- Make clear that we try to separate effectful code from pure code, i.e., whenever
+  possible, the output of a function should *only* depend on its inputs, and nothing else.
+  This makes it easy to reason about what code does and to test it.
+  Practically every application needs code that depends on other things - i.e. user input, internal state, etc. - but this should be clearly separated from code that doesn't need these things, and that's enforced in Haskell on the type level.
+  Somewhat simplified: If a function is intended to return a value of type A and needs to do something that's not pure, it must return a value of IO A instead. This makes it immediately obvious which functions are pure and which aren't.
+  You can also be much more certain that a pure function will not crash/throw an exception than in other languages, and since there's no internal state, functions are very easy to run in parallel.
+  Maybe maybe mention referential transparency (but probably not eh)
+  
+- Somehow related to the previous point is that all values are immutable (though that's misleading since IORefs and whatnot exist, but *in a pure context*, all values are immutable)
+	
+- Maybe start with examples that have inferred types, and only show explicit type annotations later
+
+- Introduce ADTs by starting with Bool, then perhaps Color = Red | Green | Blue, (or Weekday?), then Maybe, then a custom list type, and from there we can go into pattern matching on build-in lists (and then explain that the built-in list is defined the same way, and pretend it's actually `data List a = [] | a : List a`
+custom List type: data MyList a = Empty | Cons a (List a)
+then we have [1,2,3] = Cons 1 (Cons 2 (Cons 3 Empty))
+
+
+- Maybe show hoogle
+
+- at the very end include a link to some learning resource(s)
+  and maybe a link to #haskell@irc.libera.chat
+
+- Maybe towards the end do a few IO examples in do notation (claim Haskell can do imperative programming as well, or something), without really going into detail about Monads
+ -> In fact, do not mention the M-word
+ 
+ 
+Interesting points from Haskell Amuse Bouche:
+
+- bash pipes comparison -> pointfree programming with .
+- type inference: you don't need to write out types
+- higher order functions
+- Currying/eta-reduction
+- Defining custom list type/explaining what : does
+
+Another Haskell intro:
+https://www.youtube.com/watch?v=1jZ7j21g028
+mentions "Why functional programming matters" paper, might be a nice reference at the end
+- nice picture about how you have pure code with a thin layer of impure code around it
+- type signature of two parameter function as segue into currying
+- talks about list comprehensions
+- does mention type classes - the example `add a b = a + b` is actuallt pretty good, because you can
+  ask what should the inferred type be or whatever
+- where clauses
+- mentions deriving
+- quicksort example is nice
