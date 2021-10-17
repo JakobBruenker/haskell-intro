@@ -83,7 +83,7 @@ mentions "Why functional programming matters" paper, might be a nice reference a
 - nice picture about how you have pure code with a thin layer of impure code around it
 - type signature of two parameter function as segue into currying
 - talks about list comprehensions
-- does mention type classes - the example `add a b = a + b` is actuallt pretty good, because you can
+- does mention type classes - the example `add a b = a + b` is actually pretty good, because you can
   ask what should the inferred type be or whatever
 - where clauses
 - mentions deriving

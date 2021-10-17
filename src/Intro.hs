@@ -3,11 +3,17 @@
 -- the line saying "Haskell Intro" to see the code that's part of the
 -- actual presentation.
 {-# OPTIONS_GHC -Wincomplete-patterns #-}
+{-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE NegativeLiterals #-}
+
 module Intro where
 
 import Data.List
 import Prelude hiding (Maybe(..))
 import System.Directory
+
+isInfix :: String -> String -> Bool
+isInfix = isInfixOf
 
 -- Haskell Intro
 -- =============
@@ -30,6 +36,10 @@ import System.Directory
 -- Lists can be written with square brackets
 -- >>> sort [4,2,5,1,6,22,5]
 
+-- XXX Perhaps a better function to introduce these next few
+-- XXX steps would be take, it's not generic and not a higher-
+-- XXX order function
+
 -- We can supply functions as arguments to other functions
 -- >>> even 34
 
@@ -45,6 +55,9 @@ import System.Directory
 
 -- We get a type error (at compile time) if they don't match:
 -- >>> filter [1,2,3]
+
+-- We can also ask about the types of compound expressions:
+-- >>> :t filter even
 
 filterEven :: [Int] -> [Int]
 filterEven list = filter even list
@@ -63,6 +76,15 @@ filterEven list = filter even list
 
 -- x * 2 = (y + 1) * 2
 -- x = y + 1
+
+process = sort . take 10 . filter even
+
+process' list = sort (take 10 (filter even list))
+
+-- By default, every expression is lazy: It will only get evaluated
+-- as far as is absolutely necessary
+-- >>> process [1..]
+-- [2,4,6,8,10,12,14,16,18,20]
 
 -- >>> :t even
 
@@ -99,6 +121,25 @@ data List a = Empty | Cons a (List a)
 
 -- first :: [a] -> a
 
+take' :: Int -> [Int] -> [Int]
+take' count [] = []
+take' 0 (a : as) = []
+take' count (a : as) = a : take (count - 1) as
+-- take' count (a : as) | count <= 0 = []
+--                      | otherwise  = a : take (count - 1) as
+
+-- XXX Maybe go through this derivation
+-- >>> take' -1 [0]
+-- [1]
+-- take' -1 (0 : []) = 0 : take (-1 - 1) []
+-- take' -1 (0 : []) = 0 : take -2 []
+-- take' -1 (0 : []) = 0 : [] = [0]
+
+-- prop> \count list -> take count list == take' count list
+-- *** Failed! Falsified (after 11 tests and 5 shrinks):
+-- -1
+-- [0]
+
 -- Let's try to implement filter:
 -- >>> :t filter 
 
@@ -113,8 +154,6 @@ data List a = Empty | Cons a (List a)
 --   where rest = filter' predicate as
 
 -- prop> \list -> filter even list == filter' even list
-
--- prop> \list -> filter even list == filter' odd list
 
 -- >>> [1,2,3] ++ [4,5,6]
 
@@ -152,7 +191,15 @@ data List a = Empty | Cons a (List a)
 countFilenamesContaining :: String -> IO Int
 countFilenamesContaining pattern = do
   fileNames <- listDirectory "."
-  let count = length (filter (isInfixOf pattern) fileNames)
+  let count = length (filter (isInfix pattern) fileNames)
   pure count
-
+  
+-- XXX Just thinking about how to present this:
+-- countFilenamesContaining' :: String -> IO Int
+-- countFilenamesContaining' pattern = do
+--   let fileNames = listDirectory "." -- second line
+--   let count = length fileNames
+--   -- third line ^^ introduce length first, then fix
+--   pure 0 -- start with this line
+  
 -- >>> countFilenamesContaining "git"
